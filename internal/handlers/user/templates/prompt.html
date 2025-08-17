@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="/static/style.css" rel="stylesheet">
+  <script src="/static/htmx.min.js"></script>
+  <title>Vor- und Nachname eingeben</title>
+</head>
+<body class="bg-slate-300 p-5 flex flex-col">
+  
+  <form class="p-4 mb-4 inline-block max-w-150 max-h-fit bg-gray-200" 
+        hx-post="{{ .Endpoint }}" 
+        hx-trigger="submit"
+        hx-swap="none">
+    <h3>Im Homeoffice vor der Eingabe des Vor- und Nachnamens, bitte das VPN aktivieren.</h3>
+    <br>
+      <label for='fullname' class="mr-1">Vor- und Nachname</label>
+          <input class='border bg-white relative float-right focus:ring-blue-300'
+          type='text' id='fullname' name='fullname' value="">
+        <br>
+        <br>
+    <button class="my-4 px-10 py-3
+      text-white bg-blue-600 font-semibold
+      rounded relative float-right
+      hover:bg-blue-700 focus:ring-4
+      focus:ring-blue-300" type="submit">Senden</button>
+    <br>
+    <br>
+  </form>
+</body>
+</html>
