@@ -2,6 +2,7 @@ package user
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -42,27 +43,39 @@ func (h *UserHandler) DisplayForm(w http.ResponseWriter, r *http.Request) {
 // Handles user request
 //-----------------------------------------------------
 
+type RequestLog struct {
+	XForwardedFor []string `json:"x_forwarded_for,omitempty"`
+	XRealIP       string   `json:"x_real_ip,omitempty"`
+	RemoteAddr    string   `json:"remote_addr"`
+	Body          string   `json:"body,omitempty"`
+}
+
 // prints out the complete POST-Request to /fullname
 func (h *UserHandler) HandleFullname(w http.ResponseWriter, r *http.Request) {
-	log.Println("")
+	reqLog := RequestLog{
+		RemoteAddr: r.RemoteAddr,
+	}
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		ips := strings.Split(xff, ",")
-		log.Printf("X-Forwarded-For: %s \n", ips)
+		reqLog.XForwardedFor = strings.Split(xff, ",")
 	}
 	if xrip := r.Header.Get("X-Real-IP"); xrip != "" {
-		log.Printf("X-Real-IP: %s \n", xrip)
+		reqLog.XRealIP = xrip
 	}
-	log.Printf("RemoteAddr: %s \n", r.RemoteAddr)
-	// Optionally log body (if present)
 	if r.Body != nil {
 		body, err := io.ReadAll(r.Body)
 		if err == nil {
-			log.Printf("Body: %s", string(body))
+			reqLog.Body = string(body)
+			// restore body for further use
 			r.Body = io.NopCloser(bytes.NewBuffer(body))
 		}
 	}
-	
-	w.Write([]byte(""))
+	if data, err := json.Marshal(reqLog); err == nil {
+		log.Println(string(data))
+	} else {
+		log.Printf("error marshaling log: %v", err)
+	}
+
+	w.Write([]byte(`<div class='text-emerald-600'>Vielen Dank für Deine Mitarbeit!<br>Du kannst nun die IT kontaktieren, sodass sie das Upgrade anstoßen können.</div>`))
 }
 
 

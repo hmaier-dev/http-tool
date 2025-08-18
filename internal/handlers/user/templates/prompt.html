@@ -10,11 +10,11 @@
 </head>
 <body class="bg-slate-300 p-5 flex flex-col">
   
-  <form class="p-4 mb-4 inline-block max-w-150 max-h-fit bg-gray-200" 
+  <form class="p-4 mb-4 inline-block max-w-120 max-h-fit bg-gray-200" 
         hx-post="{{ .Endpoint }}" 
         hx-trigger="submit"
-        hx-swap="none">
-    <h3>Im Homeoffice vor der Eingabe des Vor- und Nachnamens, bitte das VPN aktivieren.</h3>
+        hx-target="#user_feedback">
+    <p>Falls Du Dich <b>im Homeoffice</b> befindest, starte Dein VPN bitte neu.</p>
     <br>
       <label for='fullname' class="mr-1">Vor- und Nachname</label>
           <input class='border bg-white relative float-right focus:ring-blue-300'
@@ -29,5 +29,23 @@
     <br>
     <br>
   </form>
+  
+  <div id="user_feedback" class="hidden p-4 mb-4 inline-block max-w-120 max-h-fit bg-gray-200">
+  </div>
+
+  <script>
+  const msg = document.getElementById('user_feedback')
+  const observer = new MutationObserver(() =>{
+    msg.classList.remove('hidden');
+    msg.classList.add('opacity-100');
+    msg.classList.remove('opacity-0');
+  })
+  observer.observe(msg, {
+    childList: true,
+    subtree: true,
+    characterData: true
+  });
+  </script>
+
 </body>
 </html>
